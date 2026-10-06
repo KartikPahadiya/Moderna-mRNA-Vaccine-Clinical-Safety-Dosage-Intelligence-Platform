@@ -61,7 +61,7 @@ model in `.env`):
 | Provider | Required `.env` lines |
 |---|---|
 | OpenAI | `PROVIDER=openai` + `OPENAI_API_KEY` (default model `gpt-4o-mini`) |
-| Google Gemini | `PROVIDER=gemini` + `GEMINI_API_KEY` (default `gemini-2.5-flash`) |
+| Google Gemini | `PROVIDER=gemini` + `GEMINI_API_KEY` (default `gemini-3.8-flash`) |
 | OpenRouter | `PROVIDER=openrouter` + `OPENROUTER_API_KEY` (any model id, default `openai/gpt-4o-mini`) |
 | NVIDIA NIM | `PROVIDER=nvidia` + `NVIDIA_API_KEY` (default `meta/llama-3.3-70b-instruct`) |
 

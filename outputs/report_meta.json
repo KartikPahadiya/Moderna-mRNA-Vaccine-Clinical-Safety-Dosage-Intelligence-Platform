@@ -1,13 +1,13 @@
 {
-  "mode": "deterministic_fallback",
+  "mode": "llm (gemini/gemini-3.8-flash)",
   "risk_label": "High",
   "risk_probability": 0.9605,
-  "retrieval_latency_s": 0.103,
-  "generation_latency_s": 0.0,
+  "retrieval_latency_s": 0.074,
+  "generation_latency_s": 35.328,
   "guideline_chunks": [
     "Ages 65 and older: standard adult dosing range applies; however, patients in this age band with two or more relevant pre-existing conditions should be flagged for secondary clinician review regardless of dose, due to elevated reactogenicity risk observed in this population.\n\n2.3 Dose Adjustment for Elevated Biomarker Levels",
     "Ages 65 and older: standard adult dosing range applies; however, patients in this age band with two or more relevant pre-existing conditions should be flagged for secondary clinician review regardless of dose, due to elevated reactogenicity risk observed in this population.\n\n2.3 Dose Adjustment for Elevated Biomarker Levels",
-    ". Doses above 100 micrograms are considered high-reactogenicity doses and require secondary clinician review before administration."
+    "Ages 65 and older: standard adult dosing range applies; however, patients in this age band with two or more relevant pre-existing conditions should be flagged for secondary clinician review regardless of dose, due to elevated reactogenicity risk observed in this population.\n\n2.3 Dose Adjustment for Elevated Biomarker Levels"
   ],
   "patient": {
     "Patient_ID": "P_SAMPLE",

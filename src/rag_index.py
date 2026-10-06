@@ -14,7 +14,10 @@ import json
 import time
 from pathlib import Path
 
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+try:  # langchain >= 1.x
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+except ImportError:  # pragma: no cover — langchain 0.x layout
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 
 try:  # langchain-community >= 0.3 moved HuggingFaceEmbeddings to langchain_huggingface

@@ -32,7 +32,7 @@ PROVIDERS: dict[str, dict] = {
     'gemini': {
         'env_key': 'GEMINI_API_KEY',
         'base_url': 'https://generativelanguage.googleapis.com/v1beta/openai/',
-        'default_model': 'gemini-2.5-flash',
+        'default_model': 'gemini-3.8-flash',
     },
     'openrouter': {
         'env_key': 'OPENROUTER_API_KEY',
