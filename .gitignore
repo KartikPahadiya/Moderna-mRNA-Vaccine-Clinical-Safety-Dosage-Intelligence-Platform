@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.venv/
+
+# Secrets — never commit API keys
+.env
+
+# OS
+.DS_Store
+Thumbs.db
