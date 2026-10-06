@@ -165,6 +165,35 @@ def test_fr46_report_saved_as_json_and_md():
         assert j.with_suffix('.md').exists()
 
 
+# --------------------------- LLM client ------------------------------------
+
+def test_llm_config_resolution():
+    from llm_client import PROVIDERS, resolve_llm_config
+
+    # No keys at all -> None (deterministic fallback path).
+    assert resolve_llm_config(env={}) is None
+
+    # Auto-detect: first provider with a key present.
+    cfg = resolve_llm_config(env={'GEMINI_API_KEY': 'k'})
+    assert cfg.provider == 'gemini' and cfg.model == PROVIDERS['gemini']['default_model']
+    assert cfg.base_url and 'googleapis' in cfg.base_url
+
+    # Explicit PROVIDER + model override wins over auto-detection.
+    cfg = resolve_llm_config(env={
+        'PROVIDER': 'openrouter',
+        'OPENROUTER_API_KEY': 'k',
+        'OPENROUTER_MODEL': 'meta-llama/llama-3.3-70b-instruct',
+        'GEMINI_API_KEY': 'other',
+    })
+    assert cfg.provider == 'openrouter'
+    assert cfg.model == 'meta-llama/llama-3.3-70b-instruct'
+
+    # Explicit PROVIDER without its key -> clear error.
+    import pytest
+    with pytest.raises(ValueError, match='OPENAI_API_KEY'):
+        resolve_llm_config(env={'PROVIDER': 'openai'})
+
+
 # --------------------------- Module 5 (FR-5.x) ----------------------------
 
 def test_fr51_dashboard_exists():

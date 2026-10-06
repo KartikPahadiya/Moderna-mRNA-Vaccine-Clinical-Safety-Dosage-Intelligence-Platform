@@ -49,15 +49,27 @@ venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
-Optionally enable the real LLM path in Module 4:
+Pick one LLM provider for Module 4 and copy `.env.example` to `.env`:
 
 ```bash
-copy .env.example .env         # then paste your OPENAI_API_KEY
+copy .env.example .env         # then fill in ONE provider block
 ```
 
-Without a key, `report_generator.py` automatically falls back to a deterministic,
-rule-based generator that produces the same Pydantic-validated report — the whole
-pipeline always runs end-to-end.
+Supported providers (all through one OpenAI-compatible client — just key +
+model in `.env`):
+
+| Provider | Required `.env` lines |
+|---|---|
+| OpenAI | `PROVIDER=openai` + `OPENAI_API_KEY` (default model `gpt-4o-mini`) |
+| Google Gemini | `PROVIDER=gemini` + `GEMINI_API_KEY` (default `gemini-2.5-flash`) |
+| OpenRouter | `PROVIDER=openrouter` + `OPENROUTER_API_KEY` (any model id, default `openai/gpt-4o-mini`) |
+| NVIDIA NIM | `PROVIDER=nvidia` + `NVIDIA_API_KEY` (default `meta/llama-3.3-70b-instruct`) |
+
+`<PROVIDER>_MODEL=...` optionally overrides the model name. If `PROVIDER` is
+omitted, the first provider with an API key set is used automatically. Without
+any key, `report_generator.py` falls back to a deterministic, rule-based
+generator that produces the same Pydantic-validated report — the pipeline
+always runs end-to-end.
 
 ## Run the pipeline (in order)
 

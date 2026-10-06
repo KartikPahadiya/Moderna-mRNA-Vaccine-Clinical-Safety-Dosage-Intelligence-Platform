@@ -105,11 +105,15 @@ def enforce_dose_guardrail(report: ClinicalSafetyReport,
 
 def generate_with_llm(risk_label: str, risk_probability: float,
                       guideline_chunks: list[str], p_summary: str,
-                      max_retries: int = 1) -> ClinicalSafetyReport:
-    """FR-4.3: LLM generation validated against the schema, exactly one retry."""
+                      max_retries: int = 1,
+                      llm=None) -> ClinicalSafetyReport:
+    """FR-4.3: LLM generation validated against the schema, exactly one retry.
+
+    ``llm`` may be any LangChain chat model; when omitted, one is built from
+    .env via llm_client (OpenAI, Gemini, OpenRouter or NVIDIA NIM).
+    """
     from langchain_core.output_parsers import PydanticOutputParser
     from langchain_core.prompts import ChatPromptTemplate
-    from langchain_openai import ChatOpenAI
 
     parser = PydanticOutputParser(pydantic_object=ClinicalSafetyReport)
     prompt = ChatPromptTemplate.from_messages([
@@ -120,7 +124,9 @@ def generate_with_llm(risk_label: str, risk_probability: float,
          'Relevant guideline excerpts:\n{guidelines}\n\n'
          'Generate the structured clinical safety report now.'),
     ])
-    llm = ChatOpenAI(model='gpt-4o-mini', temperature=0)
+    if llm is None:
+        from llm_client import build_llm, resolve_llm_config
+        llm = build_llm(resolve_llm_config())
     chain = prompt | llm | parser
 
     last_error = None
@@ -208,8 +214,12 @@ def generate_report(patient: dict, use_llm: bool | None = None,
                     save: bool = True) -> tuple[ClinicalSafetyReport, dict]:
     """Full Module 4 pipeline: score -> retrieve -> generate -> guardrail -> save."""
     load_dotenv(ROOT / '.env')
+
+    provider_cfg = None
     if use_llm is None:
-        use_llm = bool(os.getenv('OPENAI_API_KEY'))
+        from llm_client import resolve_llm_config
+        provider_cfg = resolve_llm_config()
+        use_llm = provider_cfg is not None
 
     risk_label, risk_proba = score_patient(patient)
     chunks, retrieval_latency = retrieve_for_patient(patient)
@@ -217,8 +227,11 @@ def generate_report(patient: dict, use_llm: bool | None = None,
 
     start = time.perf_counter()
     if use_llm:
+        if provider_cfg is None:  # explicit use_llm=True without a key -> error clearly
+            from llm_client import resolve_llm_config
+            provider_cfg = resolve_llm_config()
         report = generate_with_llm(risk_label, risk_proba, chunks, p_summary)
-        mode = 'llm'
+        mode = f'llm ({provider_cfg.provider}/{provider_cfg.model})'
     else:
         report = generate_fallback(risk_label, risk_proba, chunks, patient)
         mode = 'deterministic_fallback'
